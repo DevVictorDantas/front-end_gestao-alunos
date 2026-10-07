@@ -1,0 +1,23 @@
+# Dependências (a partir do Módulo 12 — React/Vite)
+node_modules/
+
+# Build de produção
+dist/
+dist-ssr/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Variáveis de ambiente
+.env
+.env.local
+
+# Metadados do editor / sistema
+.DS_Store
+*:Zone.Identifier
+.vscode/*
+!.vscode/extensions.json
+
+# Cache de build do TypeScript
+*.tsbuildinfo

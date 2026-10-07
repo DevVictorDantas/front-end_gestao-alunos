@@ -1,0 +1,63 @@
+/*
+ * ESTILOS (index.css) — quase vazio DE PROPÓSITO
+ * =============================================
+ *
+ * Você já aprendeu CSS no Módulo 10. Aqui vem só o mínimo (um reset e algumas
+ * variáveis para você começar) — a IDENTIDADE VISUAL do portal é sua:
+ * cores, tipografia, cards ou tabela, tema claro ou escuro, tudo sua escolha.
+ * Capriche: a apresentação vale nota (veja a rubrica em docs/DESAFIOS.md).
+ *
+ * Só duas exigências técnicas:
+ *   - o estilo mora em arquivo CSS (nada de `style={{...}}` espalhado no JSX);
+ *   - o layout precisa funcionar no celular (pelo menos uma @media).
+ */
+
+/* --- reset mínimo (mantenha) --- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+}
+
+/* --- variáveis: troque estes valores pelo SEU tema --- */
+:root {
+  --fundo: #f6f7f9;
+  --superficie: #ffffff;
+  --texto: #1c2230;
+  --primaria: #2b5cd9;
+  --borda: #dde1e8;
+  --espaco: 16px;
+}
+
+/* TODO: escreva daqui para baixo os estilos dos SEUS componentes
+   (cabeçalho, cards/tabela, formulário, botões, estados de foco...). */
+
+/* ==========================================================================
+   APAGUE deste ponto até o fim: é só o estilo da tela provisória do App.tsx.
+   ========================================================================== */
+.inicial {
+  max-width: 640px;
+  margin: 10vh auto;
+  padding: var(--espaco);
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  line-height: 1.6;
+}
+
+.inicial h1 {
+  margin-top: 0;
+  color: var(--primaria);
+}
+
+.inicial code {
+  background: var(--fundo);
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
