@@ -27,9 +27,9 @@
  */
 
 // DICA — o que você vai importar aqui:
-//   import type { Aluno, AlunoEntrada, Disciplina, FiltrosAluno } from "./types";
-//   import { alunosIniciais, disciplinasIniciais } from "./mock";
-
+import { http } from "./http";
+import type { Aluno, AlunoEntrada, FiltrosAluno } from "./types";
+import { limparToken, salvarToken } from "./auth";
 /**
  * Simula a demora da rede (já vem pronto — use e agradeça).
  * Serve para você VER a tela de "Carregando...", que aparece e desaparece
@@ -37,57 +37,52 @@
  *
  *   await esperar(600);   // pausa de 600 milissegundos
  */
-export function esperar(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+
+export async function login(username: string, senha: string): Promise<void> {
+  const resposta = await http.post<{ token: string }>("login", {
+    username,
+    senha,
+  });
+
+  salvarToken(resposta.data.token);
+}
+
+export function logout(): void {
+  limparToken();
+}
+
+export async function buscarUsuarioLogado(): Promise<{ username: string }> {
+  const resposta = await http.get<{ username: string }>("eu");
+  return resposta.data;
 }
 
 // =========================== ALUNOS ===========================
 //
-// ANTES DOS TODOs — o "banco de mentira" em memória:
-//   O mock é a carga INICIAL, e ele não muda. Mas criar e excluir aluno
-//   precisam de algum lugar que MUDE. Então declare aqui, no topo deste
-//   arquivo, uma cópia da lista que este módulo vai manter:
-//
-//     let banco: Aluno[] = [...alunosIniciais];
-//
-//   `listarAlunos` lê do `banco`; `criarAluno` e `excluirAluno` alteram o
-//   `banco`. É o papel que o PostgreSQL faz no backend. (Some ao recarregar
-//   a página — normal: é memória, não banco de verdade.)
-//
-// TODO 1 (Etapa 1): listarAlunos(filtros?): Promise<Aluno[]>
-//   Devolva a lista de alunos. Comece simples: `await esperar(500)` e devolva
-//   `alunosIniciais`. Os filtros entram no Desafio 2.
-//   DICA da assinatura:
-//     export async function listarAlunos(filtros?: FiltrosAluno): Promise<Aluno[]> { ... }
-//
-// TODO 2 (Desafio 2): faça listarAlunos APLICAR os filtros recebidos:
-//   - q            -> nome contém o texto, ignorando maiúsculas/minúsculas
-//                     (DICA: nome.toLowerCase().includes(q.toLowerCase()))
-//   - idade_minima -> idade >= idade_minima
-//   - media_minima -> media >= media_minima
-//   Os filtros são COMBINÁVEIS: passando dois, o aluno precisa satisfazer os
-//   dois. Use .filter().
-//   POR QUE aqui e não no componente: na API real quem filtra é o backend
-//   (`GET /alunos?q=ana&idade_minima=18`). Filtrando aqui, o componente já
-//   está escrito do jeito certo para o Módulo III.
-//
-// TODO 3 (Desafio 3): criarAluno(dados: AlunoEntrada): Promise<Aluno>
-//   Gere um id novo, monte o Aluno completo e devolva.
-//   REGRA DE NEGÓCIO (a API responde 409 nesse caso): se já existir um aluno
-//   com a MESMA matricula, lance um erro:
-//     throw new Error("Já existe um aluno com essa matrícula");
-//   O seu formulário vai capturar esse erro e mostrar a mensagem na tela.
-//   DICA do id: Math.max(0, ...lista.map(a => a.id)) + 1
-//
-// TODO 4 (Desafio 3): excluirAluno(id: number): Promise<void>
-//   Remova o aluno da lista. Se o id não existir, lance um erro
-//   (é o 404 da API).
+export async function listarAlunos(
+  filtros: FiltrosAluno = {},
+): Promise<Aluno[]> {
+  const resposta = await http.get<Aluno[]>("alunos", { params: filtros });
+  return resposta.data;
+}
 
-// ========================= DISCIPLINAS =========================
-//
-// TODO 5 (bônus): listarDisciplinas(): Promise<Disciplina[]>
-//
-// TODO 6 (bônus): disciplinasDoAluno(alunoId: number): Promise<Disciplina[]>
-//   Na API isso é um JOIN (`GET /alunos/{id}/disciplinas`). Aqui, você pode
-//   guardar as matrículas como uma lista de pares { aluno_id, disciplina_id }
-//   no mock e cruzar com .filter() + .map().
+export async function buscarAluno(id: number): Promise<Aluno> {
+  const resposta = await http.get<Aluno>(`alunos/${id}`);
+  return resposta.data;
+}
+
+export async function criarAluno(aluno: AlunoEntrada): Promise<Aluno> {
+  const resposta = await http.post<Aluno>("alunos", aluno);
+  return resposta.data;
+}
+
+export async function atualizarAluno(
+  id: number,
+  aluno: AlunoEntrada,
+): Promise<Aluno> {
+  const resposta = await http.patch<Aluno>(`alunos/${id}`, aluno);
+  return resposta.data;
+}
+
+export async function excluirAluno(id: number): Promise<void> {
+  await http.delete(`alunos/${id}`);
+}
