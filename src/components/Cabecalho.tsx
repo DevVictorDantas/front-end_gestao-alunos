@@ -8,7 +8,7 @@ function Cabecalho() {
         </div>
       </div>
       <nav className="menu" aria-label="Seções do portal">
-        <a href="#alunos">Alunos</a>
+        <a onClick={() => {}}>Alunos</a>
       </nav>
     </header>
   );

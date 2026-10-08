@@ -39,12 +39,12 @@ import { limparToken, salvarToken } from "./auth";
  */
 
 export async function login(username: string, senha: string): Promise<void> {
-  const resposta = await http.post<{ token: string }>("login", {
+  const resposta = await http.post<{ access_token: string }>("login", {
     username,
     senha,
   });
 
-  salvarToken(resposta.data.token);
+  salvarToken(resposta.data.access_token);
 }
 
 export function logout(): void {
