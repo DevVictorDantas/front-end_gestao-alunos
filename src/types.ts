@@ -11,6 +11,21 @@ export interface Aluno {
 //   DICA: você pode escrever à mão ou usar `Omit<Aluno, "id">`.
 export type AlunoEntrada = Omit<Aluno, "id">;
 
+// Formato do GET /eu (UsuarioSaida no back).
+export interface Usuario {
+  id: number;
+  nome: string;
+  username: string;
+  criado_em: string;
+}
+
+// O que o POST /registrar recebe (UsuarioEntrada no back).
+export interface UsuarioEntrada {
+  nome: string;
+  username: string;
+  senha: string;
+}
+
 export interface FiltrosAluno {
   q?: string;
   idadeMin?: number;

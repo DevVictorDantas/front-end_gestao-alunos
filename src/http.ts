@@ -37,6 +37,13 @@ http.interceptors.request.use((config) => {
   return config;
 });
 
+// Quem for avisado quando a sessão cair (o App registra a função de sair).
+let aoExpirar: () => void = () => {};
+
+export function aoExpirarSessao(funcao: () => void): void {
+  aoExpirar = funcao;
+}
+
 http.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -44,8 +51,10 @@ http.interceptors.response.use(
 
     const veioDoLogin = error.config?.url?.includes("login");
     if (status === 401 && !veioDoLogin) {
+      // Sessão vencida: limpa o token e volta para o login, sem mensagem.
       limparToken();
-      window.location.reload();
+      aoExpirar();
+      return new Promise(() => {}); // nunca resolve: a tela que chamou não mostra erro
     }
 
     return Promise.reject(error);

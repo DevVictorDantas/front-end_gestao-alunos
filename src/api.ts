@@ -28,7 +28,7 @@
 
 // DICA — o que você vai importar aqui:
 import { http } from "./http";
-import type { Aluno, AlunoEntrada, FiltrosAluno } from "./types";
+import type { Aluno, AlunoEntrada, FiltrosAluno, Usuario, UsuarioEntrada } from "./types";
 import { limparToken, salvarToken } from "./auth";
 /**
  * Simula a demora da rede (já vem pronto — use e agradeça).
@@ -51,9 +51,24 @@ export function logout(): void {
   limparToken();
 }
 
-export async function buscarUsuarioLogado(): Promise<{ username: string }> {
-  const resposta = await http.get<{ username: string }>("eu");
+export async function buscarUsuarioLogado(): Promise<Usuario> {
+  const resposta = await http.get<Usuario>("eu");
   return resposta.data;
+}
+
+// Exige estar logado; 409 se o username já existir.
+export async function criarUsuario(usuario: UsuarioEntrada): Promise<Usuario> {
+  const resposta = await http.post<Usuario>("registrar", usuario);
+  return resposta.data;
+}
+
+export async function listarUsuarios(): Promise<Usuario[]> {
+  const resposta = await http.get<Usuario[]>("usuarios");
+  return resposta.data;
+}
+
+export async function excluirUsuario(id: number): Promise<void> {
+  await http.delete(`usuarios/${id}`);
 }
 
 // =========================== ALUNOS ===========================
@@ -61,7 +76,14 @@ export async function buscarUsuarioLogado(): Promise<{ username: string }> {
 export async function listarAlunos(
   filtros: FiltrosAluno = {},
 ): Promise<Aluno[]> {
-  const resposta = await http.get<Aluno[]>("alunos", { params: filtros });
+  // O back espera os nomes em snake_case (idade_minima, media_minima).
+  const resposta = await http.get<Aluno[]>("alunos", {
+    params: {
+      q: filtros.q || undefined,
+      idade_minima: filtros.idadeMin,
+      media_minima: filtros.mediaMin,
+    },
+  });
   return resposta.data;
 }
 
